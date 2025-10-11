@@ -31,6 +31,7 @@ You can install the required libraries using:
 'pip install speechrecognition pyttsx3 openai'
 
 Project Structure
+
 ChatBuddy/
 ├── main.py             # Main Python script with voice assistant logic
 ├── .project            # Eclipse project metadata
