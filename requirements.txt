@@ -1,0 +1,8 @@
+openai
+SpeechRecognition
+pyttsx3
+pyaudio
+requests
+python-dotenv
+pypiwin32; platform_system == "Windows"
+pipwin; platform_system == "Windows"

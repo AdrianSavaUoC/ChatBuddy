@@ -1,0 +1,24 @@
+README_map.md
+
+# TTS Piper
+piper
+
+# Virtual environment
+venv/
+.env
+
+# Temporary files Python
+__pycache__
+*.pyc
+
+# Files IDE
+.vscode/
+.idea/
+
+# Audio
+*.mp3
+*.wav
+
+# Autres
+.DS_Store
+tmp.txt

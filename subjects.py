@@ -1,8 +1,15 @@
 from tts import speak
 
 SUBJECTS = [
-    "Science", "Mathematics", "History", "Geography",
-    "Art", "Music", "Technology", "Sports", "Literature"
+    "Science",
+    "Mathématiques",
+    "Histoire",
+    "Géographie",
+    "Art",
+    "Musique",
+    "Technologie",
+    "Sport",
+    "Littérature"
 ]
 
 def choose_subject():

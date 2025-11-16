@@ -29,7 +29,7 @@ def run_coach():
     while True:
         subject = choose_subject()
         if lang_code == 'fr': 
-            speak(f"Aujourd'hui, nous allons nous concentrer sur {subject}.", lang_code)
+            speak(f"Aujourd'hui, nous allons nous concentrer sur le sujet: {subject}.", lang_code)
         elif lang_code == 'de':
             speak(f"Heute werden wir uns auf {subject} konzentrieren .", lang_code)
         elif lang_code == 'it':

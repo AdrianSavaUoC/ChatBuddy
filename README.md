@@ -17,6 +17,18 @@ ChatBuddy is a Python-based AI voice assistant designed to help young people (12
 - **Stop Commands**: Easily exit the session by saying “exit”, “quit”, “bye”, or similar.
 - **Ethical and safety considerations**: Never provide medical, legal, or harmful advice. 
 
+
+## Installation
+```bash
+git clone https://github.com/tonrepo/chatbuddy.git
+cd chatbuddy
+python -m venv venv
+venv\Scripts\activate # deactivate (to disable)
+pip install -r requirements.txt   # 
+$env:INFOMANIAK_API_TOKEN="..."
+$env:INFOMANIAK_PRODUCT_ID="..."
+python main.py
+```
 ---
 
 ## Requirements
