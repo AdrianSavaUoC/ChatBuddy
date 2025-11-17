@@ -40,7 +40,8 @@ python main.py
   - `pyttsx3`
   - `openai` (official Python SDK)
 - Microphone and speakers/headphones for voice input/output.
-- Piper Voice models STT: https://huggingface.co/rhasspy/piper-voices/tree/main/fr
+- Download Piper TTS: https://github.com/rhasspy/piper/releases
+- Voice models for Piper: https://huggingface.co/rhasspy/piper-voices/tree/main/fr
 
 You can install the required libraries using:
 'pip install speechrecognition pyttsx3 openai'
