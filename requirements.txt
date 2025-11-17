@@ -1,8 +1,20 @@
-openai
+# --- Reconnaissance vocale (micro) ---
 SpeechRecognition
-pyttsx3
+
+# PyAudio pour le micro
 pyaudio
+
+# --- Audio player pour Piper ---
+sounddevice
+soundfile
+
+# --- API Infomaniak (OpenAI-compatible) ---
+openai
 requests
 python-dotenv
-pypiwin32; platform_system == "Windows"
+
+# --- Pour installer facilement PyAudio sous Windows ---
 pipwin; platform_system == "Windows"
+
+# --- Pour la compatibilité Windows ---
+pypiwin32; platform_system == "Windows"
