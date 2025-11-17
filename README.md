@@ -23,7 +23,8 @@ ChatBuddy is a Python-based AI voice assistant designed to help young people (12
 git clone https://github.com/tonrepo/chatbuddy.git
 cd chatbuddy
 python -m venv venv
-venv\Scripts\activate # deactivate (to disable)
+venv\Scripts\activate # or source venv/bin/activate(Linux/Mac) | deactivate (to disable)
+pip install --upgrade pip
 pip install -r requirements.txt   # 
 $env:INFOMANIAK_API_TOKEN="..."
 $env:INFOMANIAK_PRODUCT_ID="..."
@@ -39,6 +40,7 @@ python main.py
   - `pyttsx3`
   - `openai` (official Python SDK)
 - Microphone and speakers/headphones for voice input/output.
+- Piper Voice models STT: https://huggingface.co/rhasspy/piper-voices/tree/main/fr
 
 You can install the required libraries using:
 'pip install speechrecognition pyttsx3 openai'

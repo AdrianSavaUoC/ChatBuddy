@@ -1,65 +1,79 @@
-import pyttsx3
+import os
+import platform
+import subprocess
+import tempfile
+import soundfile as sf
+import sounddevice as sd
 
-tts_engine = None
-DEFAULT_VOICE_ID = None
-LANGUAGE_VOICES = {}
+# OS detection
+system = platform.system()
+PIPER_BINARY = "piper.exe" if system == "Windows" else "piper"
+PIPER_PATH = os.path.join("piper", PIPER_BINARY)
 
-def init_tts():
-    """Initialise le moteur TTS et détecte les voix locales."""
-    global DEFAULT_VOICE_ID, LANGUAGE_VOICES
-    try:
-        engine = pyttsx3.init()
-        voices = engine.getProperty('voices')
+# Model paths
+MODEL_PATHS = {
+    "fr": "piper/models/fr_FR-siwis-medium.onnx",
+}
 
-        if voices:
-            DEFAULT_VOICE_ID = voices[0].id
-            for voice in voices:
-                voice_id_lower = voice.id.lower()
-                voice_name_lower = voice.name.lower() if hasattr(voice, 'name') else ""
-
-                if 'en' in voice_id_lower or 'english' in voice_name_lower:
-                    LANGUAGE_VOICES.setdefault('en', voice.id)
-                if 'fr' in voice_id_lower or 'french' in voice_name_lower or 'français' in voice_name_lower:
-                    LANGUAGE_VOICES.setdefault('fr', voice.id)
-                if 'de' in voice_id_lower or 'german' in voice_name_lower or 'deutsch' in voice_name_lower:
-                    LANGUAGE_VOICES.setdefault('de', voice.id)
-                if 'it' in voice_id_lower or 'italian' in voice_name_lower or 'italiano' in voice_name_lower:
-                    LANGUAGE_VOICES.setdefault('it', voice.id)
-                if 'ro' in voice_id_lower or 'romanian' in voice_name_lower:
-                    LANGUAGE_VOICES.setdefault('ro', voice.id)
-
-            print(f"✅ Voix disponibles : {list(LANGUAGE_VOICES.keys())}")
-
-        engine.stop()
-    except Exception as e:
-        print(f"⚠️ Erreur d’initialisation TTS : {e}")
-        DEFAULT_VOICE_ID = None
-
-
-def get_voice_for_language(lang_code):
-    """Renvoie l’ID de la voix pour la langue donnée."""
-    return LANGUAGE_VOICES.get(lang_code, DEFAULT_VOICE_ID)
+# Track if Piper was announced once
+PIPER_LOADED_ONCE = False
 
 
 def speak(text, lang_code="fr"):
-    """Parle le texte en utilisant pyttsx3 (offline, stable)."""
+    global PIPER_LOADED_ONCE
+
+    # PRINT FOR DEBUG
     print(f"🎙️ ChatBuddy: {text}")
 
-    global tts_engine
+    # 🔥 Fix: skip empty text
+    if not text or text.strip() == "":
+        return
+
+    model_path = MODEL_PATHS.get(lang_code, MODEL_PATHS["fr"])
+
+    # Temporary WAV output file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
+        wav_path = tmp.name
+
     try:
-        tts_engine = pyttsx3.init()
-        tts_engine.setProperty("rate", 175)
-        tts_engine.setProperty("volume", 1.0)
+        # Run Piper silently with expressive params
+        process = subprocess.Popen(
+            [
+                PIPER_PATH,
+                "--model", model_path,
+                "--output_file", wav_path,
+                "--noise_scale", "0.5",
+                "--noise_w", "0.8",
+                "--length_scale", "0.9",
+                "--sentence_silence", "0.2"
+            ],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
 
-        voice_to_use = get_voice_for_language(lang_code)
-        if voice_to_use:
-            tts_engine.setProperty("voice", voice_to_use)
+        process.communicate(input=text.encode("utf-8"))
 
-        tts_engine.say(text)
-        tts_engine.runAndWait()
+        # Announce Piper startup only once
+        if not PIPER_LOADED_ONCE:
+            print("🔊 Piper TTS prêt !")
+            PIPER_LOADED_ONCE = True
+
+        # Check if WAV is valid
+        if not os.path.exists(wav_path) or os.path.getsize(wav_path) < 200:
+            print("⚠️ Piper n’a pas généré de son. Vérifie ton modèle ou ton texte.")
+            return
+
+        # Read WAV properly
+        audio, sr = sf.read(wav_path, dtype="float32")
+
+        # Play
+        sd.play(audio, sr)
+        sd.wait()
+
     except Exception as e:
-        print(f"⚠️ Erreur TTS : {e}")
+        print(f"⚠️ Piper TTS error: {e}")
+
     finally:
-        if tts_engine:
-            tts_engine.stop()
-            tts_engine = None
+        if os.path.exists(wav_path):
+            os.remove(wav_path)

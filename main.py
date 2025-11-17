@@ -1,11 +1,10 @@
-from tts import speak, init_tts
+from tts import speak
 from languages import select_language
 from subjects import choose_subject
 from stt import listen_for_voice_input
 from chat_logic import get_coaching_and_answer
 
 def run_coach():
-    init_tts()
     selected_language = select_language()
     
     # Get the language code (the key from LANGUAGES dict)
@@ -17,19 +16,19 @@ def run_coach():
             break
         
     if lang_code == 'fr':
-        speak(f"Bonjour ! Je suis Chat Buddy, votre coach de conversation IA en français. Veuillez choisir un sujet dans la liste.", lang_code)
+        speak(f"Salut toi! Je m'appelle Alexiana, ton guide de conversation, je parle français. De quel sujet as-tu envie de parler aujourd'hui?", lang_code)
     elif lang_code == 'de':
-        speak(f"Hallo! Ich bin Chat Buddy, dein KI-Gesprächstrainer. Bitte wählen Sie ein Fach aus der Liste.", lang_code)
+        speak(f"Hallo! Ich bin Alexiana, dein KI-Gesprächstrainer. Bitte wählen Sie ein Fach aus der Liste.", lang_code)
     elif lang_code == 'it':
-        speak(f"Ciao! Sono Chat Buddy, il tuo coach di conversazione IA in italiano. Per favore, scegli un argomento dalla lista.", lang_code)   
+        speak(f"Ciao! Sono Alexiana, il tuo coach di conversazione IA in italiano. Per favore, scegli un argomento dalla lista.", lang_code)   
     else:    
-        speak(f"Hello! I am ChatBuddy, your AI Conversation Coach in {selected_language['label']}.", lang_code)
+        speak(f"Hello! I am Alexiana, your AI Conversation Coach in {selected_language['label']}.", lang_code)
     
 
     while True:
         subject = choose_subject()
         if lang_code == 'fr': 
-            speak(f"Aujourd'hui, nous allons nous concentrer sur le sujet: {subject}.", lang_code)
+            speak(f"Super aujourd'hui, nous allons discuter du sujet: {subject}. Poses-moi n'importe quelle question, je t'écoute.", lang_code)
         elif lang_code == 'de':
             speak(f"Heute werden wir uns auf {subject} konzentrieren .", lang_code)
         elif lang_code == 'it':
@@ -44,13 +43,17 @@ def run_coach():
             if not user_prompt:
                 continue
 
-            stop_words = ["exit", "quit", "stop", "bye", "i'm done", "finished", "thank you", 
-                          "sortir", "quitter", "arrêter", "au revoir", "j'ai terminé", "fini", "merci",
-                          "Beenden", "verlassen", "stopp", "tschüss", "ich bin fertig", "fertig", "danke",
-                          "uscita", "esci", "ferma", "ciao", "ho finito", "finito", "grazie"
-                          "ieșire", "ieși", "oprește", "pa", "am terminat", "terminat", "mulțumesc",
-                          ]
-            if any(word in user_prompt.lower() for word in stop_words):
+            stop_words = [
+                "exit", "quit", "stop", "bye", "i'm done", "finished", "thank you",
+                "sortir", "quitter", "arrêter", "au revoir", "j'ai terminé", "fini", "merci",
+                "beenden", "verlassen", "stopp", "tschüss", "ich bin fertig", "fertig", "danke",
+                "uscita", "esci", "ferma", "ciao", "ho finito", "finito", "grazie",
+                # ❗ Je retire "pa" de la liste
+                "ieșire", "ieși", "oprește", "am terminat", "terminat", "mulțumesc",
+            ]
+
+            words = user_prompt.lower().split()
+            if any(word in words for word in stop_words):
                 if lang_code == 'fr':
                     speak("Au revoir ! Continuez à poser de bonnes questions!", lang_code)
                 elif lang_code == 'de':
@@ -65,10 +68,18 @@ def run_coach():
             coach_data = get_coaching_and_answer(user_prompt, subject, selected_language["label"])
 
             if coach_data:
-                # score = coach_data.get("score", 0)
-                speak(coach_data.get("answer", "No answer generated."), lang_code)
-                speak(f"{coach_data.get('tip', 'No tip this time.')}", lang_code)
-                # speak(f"Prompter score: {score} out of 100", lang_code)
+                answer = coach_data.get("answer", "").strip()
+                tip = coach_data.get("tip", "").strip()
+                spoken_text = ""
+                if answer:
+                    spoken_text += answer + " "
+                if tip:
+                    spoken_text += tip
+                spoken_text = spoken_text.strip()
+                if spoken_text:
+                    speak(spoken_text, lang_code)
+
+
 
 if __name__ == "__main__":
     run_coach()

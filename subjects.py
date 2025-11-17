@@ -9,7 +9,8 @@ SUBJECTS = [
     "Musique",
     "Technologie",
     "Sport",
-    "Littérature"
+    "Littérature",
+    "Culture Générale"
 ]
 
 def choose_subject():
@@ -26,4 +27,4 @@ def choose_subject():
             # speak(f"You chose {selected}. Great choice!")
             return selected
         else:
-            speak("Invalid choice. Try again.")
+            speak("Je n'ai pas compris. Choisis un numéro valide.", "fr")
